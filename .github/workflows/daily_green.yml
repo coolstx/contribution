@@ -2,7 +2,6 @@
 
 on:
   schedule:
-    # Өдөр бүр ажиллана
     - cron: '30 2 * * *'
   workflow_dispatch:
 
@@ -11,11 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # v3-ийг v4 болгож шинэчлэв (Node.js 24 дэмжинэ)
 
       - name: Randomized Contribution
         run: |
-          # 1-ээс 3-ын хооронд санамсаргүй тоогоор commit хийнэ
           NUM_COMMITS=$(( ( RANDOM % 3 )  + 1 ))
           echo "Өнөөдөр $NUM_COMMITS удаа өөрчлөлт оруулна..."
 
