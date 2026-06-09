@@ -1,0 +1,25 @@
+﻿name: Daily Contribution Bot
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Make a small change
+        run: |
+          echo "Last activity: $(date)" > activity.txt
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add activity.txt
+          git commit -m "Update activity log [skip ci]"
+          git push
