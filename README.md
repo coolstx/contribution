@@ -1,18 +1,16 @@
-﻿# GitHub Contribution Bot (Hacker Edition)
+﻿# Advanced GitHub Contribution Bot
 ![GitHub Actions](https://img.shields.io/badge/Workflow-Automated-green?style=flat-square&logo=github-actions)
-![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
+![Security](https://img.shields.io/badge/Security-OSINT--Ready-red?style=flat-square)
 
-An automated system designed to maintain GitHub contribution consistency using GitHub Actions. This project demonstrates the use of YAML-based workflows and Git automation to simulate developer activity.
+An intelligent automation engine designed to simulate realistic developer activity on GitHub. Unlike standard bots, this engine uses randomized commit frequencies to mirror human-like contribution patterns.
 
-## 🛠 Technical Overview
-- **Engine:** GitHub Actions (Ubuntu-latest runner)
-- **Schedule:** Automated via Cron syntax (`0 1 * * *`)
-- **Action:** Modifies `activity.txt` with a timestamp and performs an automated commit/push.
+## 🚀 Advanced Features
+- **Dynamic Frequency:** Performs a random number of commits (1-3) per execution.
+- **Workflow Automation:** Leverages GitHub Actions for cloud-native execution.
+- **Human-Like Patterns:** Uses variable commit messages and log entries.
 
-## 🚀 Deployment
-1. Create a private or public repository on GitHub.
-2. Push this codebase to the repository.
-3. The workflow will automatically start based on the cron schedule.
+## 🛠 Setup
+The bot is pre-configured to run on the `main` branch. It modifies `activity.log` to maintain an active contribution heat map.
 
-## ⚠️ Disclaimer
-This project is for educational purposes and to showcase automation capabilities within the GitHub ecosystem.
+## ⚖️ Disclaimer
+This project is intended for educational purposes in automation and DevOps workflows.

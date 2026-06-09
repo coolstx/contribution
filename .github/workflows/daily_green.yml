@@ -1,25 +1,32 @@
-﻿name: Daily Contribution Bot
+﻿name: Advanced Contribution Bot
 
 on:
   schedule:
-    - cron: '0 1 * * *'
+    # Өдөр бүр ажиллана
+    - cron: '30 2 * * *'
   workflow_dispatch:
 
 jobs:
-  build:
+  contribute:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Make a small change
+      - name: Randomized Contribution
         run: |
-          echo "Last activity: $(date)" > activity.txt
+          # 1-ээс 3-ын хооронд санамсаргүй тоогоор commit хийнэ
+          NUM_COMMITS=$(( ( RANDOM % 3 )  + 1 ))
+          echo "Өнөөдөр $NUM_COMMITS удаа өөрчлөлт оруулна..."
 
-      - name: Commit and Push
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add activity.txt
-          git commit -m "Update activity log [skip ci]"
-          git push
+          for i in $(seq 1 $NUM_COMMITS)
+          do
+            echo "Entry $(date +'%Y-%m-%d %H:%M:%S') - Task $i completed" >> activity.log
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add activity.log
+            git commit -m "chore: updates activity log - task $i [skip ci]"
+          done
+
+      - name: Push changes
+        run: git push origin main
