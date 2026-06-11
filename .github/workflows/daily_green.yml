@@ -8,7 +8,6 @@ on:
 jobs:
   contribute:
     runs-on: ubuntu-latest
-    
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     
@@ -24,10 +23,14 @@ jobs:
           for i in $(seq 1 $NUM_COMMITS)
           do
             echo "Entry $(date +'%Y-%m-%d %H:%M:%S') - Task $i completed" >> activity.log
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
+            
+            # ЭНД ТАНЫ ХУВИЙН GITHUB ИМЭЙЛ БОЛОН ХЭРЭГЛЭГЧИЙН НЭР БАЙХ ЁСТОЙ
+            git config --local user.email "coolstx-ийн-жинхэнэ-имэйл@example.com"
+            git config --local user.name "coolstx"
+            
+            # [skip ci]-ийг хасаж, энгийн хэлбэрээр commit хийх
             git add activity.log
-            git commit -m "chore: updates activity log - task $i [skip ci]"
+            git commit -m "chore: updates activity log - task $i"
           done
 
       - name: Push changes
