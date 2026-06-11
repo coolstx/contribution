@@ -1,4 +1,4 @@
-﻿name: Advanced Contribution Bot
+name: Advanced Contribution Bot
 
 on:
   schedule:
@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # v3-ийг v4 болгож шинэчлэв (Node.js 24 дэмжинэ)
+        uses: actions/checkout@v4
 
       - name: Randomized Contribution
         run: |
-          NUM_COMMITS=$(( ( RANDOM % 3 )  + 1 ))
+          # 10-аас 20-ын хооронд санамсаргүй тоо гаргах (0-10 дээр 10-ыг нэмнэ)
+          NUM_COMMITS=$(( ( RANDOM % 11 )  + 10 ))
           echo "Өнөөдөр $NUM_COMMITS удаа өөрчлөлт оруулна..."
 
           for i in $(seq 1 $NUM_COMMITS)
