@@ -8,13 +8,16 @@ on:
 jobs:
   contribute:
     runs-on: ubuntu-latest
+    
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Randomized Contribution
         run: |
-          # 10-аас 20-ын хооронд санамсаргүй тоо гаргах (0-10 дээр 10-ыг нэмнэ)
           NUM_COMMITS=$(( ( RANDOM % 11 )  + 10 ))
           echo "Өнөөдөр $NUM_COMMITS удаа өөрчлөлт оруулна..."
 
