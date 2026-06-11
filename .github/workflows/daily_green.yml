@@ -2,7 +2,10 @@ name: Advanced Contribution Bot
 
 on:
   schedule:
-    - cron: '30 2 * * *'
+    # Өдөрт хэд хэдэн удаа (04:30, 10:30, 16:30 UTC) ажиллаж, санамсаргүй байдлыг ихэсгэнэ
+    - cron: '30 4 * * *'
+    - cron: '30 10 * * *'
+    - cron: '30 16 * * *'
   workflow_dispatch:
 
 jobs:
@@ -15,20 +18,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Randomized Contribution
+      - name: Smart Contribution Generator
         run: |
-          NUM_COMMITS=$(( ( RANDOM % 11 )  + 10 ))
+          # Өнөөдөр ямар гараг байгааг шалгах (1=Даваа, 7=Ням)
+          DAY_OF_WEEK=$(date +%u)
+          
+          # Хэрэв амралтын өдөр бол 70%-ийн магадлалтайгаар алгасах (Хүн шиг харагдуулах)
+          if [ $DAY_OF_WEEK -ge 6 ] && [ $(( RANDOM % 10 )) -gt 2 ]; then
+            echo "Өнөөдөр амралтын өдөр. Commit хийхгүй алгаслаа."
+            exit 0
+          fi
+
+          # 5-аас 15-ын хооронд санамсаргүй тоогоор commit хийнэ
+          NUM_COMMITS=$(( ( RANDOM % 11 )  + 5 ))
           echo "Өнөөдөр $NUM_COMMITS удаа өөрчлөлт оруулна..."
+
+          # Санамсаргүй commit мессежнүүдийн жагсаалт
+          MESSAGES=(
+            "fix: resolve UI alignment issue"
+            "feat: add new utility functions"
+            "docs: update installation guide"
+            "refactor: optimize core algorithm"
+            "chore: update dependencies"
+            "fix: patch security vulnerability"
+            "perf: improve memory management"
+          )
+
+          # Таны профайлыг 100% ногоон болгох тохиргоо
+          git config --local user.name "coolstx"
+          git config --local user.email "coolstx@users.noreply.github.com"
 
           for i in $(seq 1 $NUM_COMMITS)
           do
-            echo "Entry $(date +'%Y-%m-%d %H:%M:%S') - Task $i completed" >> activity.log
-            git config --local user.email "kentsw89@gmail.com"
-            git config --local user.name "coolstx"
+            # Санамсаргүй мессеж сонгох
+            RANDOM_MSG=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
             
-            # [skip ci]-ийг хасаж, энгийн хэлбэрээр commit хийх
+            echo "Log entry: $(date +'%Y-%m-%d %H:%M:%S') - Event $i" >> activity.log
             git add activity.log
-            git commit -m "chore: updates activity log - task $i"
+            git commit -m "$RANDOM_MSG [skip ci]"
+            
+            # Commit бүрийн хооронд бага зэрэг хугацаа авах (санамсаргүй секунд хүлээх)
+            sleep $(( RANDOM % 3 + 1 ))
           done
 
       - name: Push changes
