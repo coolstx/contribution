@@ -23,9 +23,7 @@ jobs:
           for i in $(seq 1 $NUM_COMMITS)
           do
             echo "Entry $(date +'%Y-%m-%d %H:%M:%S') - Task $i completed" >> activity.log
-            
-            # ЭНД ТАНЫ ХУВИЙН GITHUB ИМЭЙЛ БОЛОН ХЭРЭГЛЭГЧИЙН НЭР БАЙХ ЁСТОЙ
-            git config --local user.email "coolstx-ийн-жинхэнэ-имэйл@example.com"
+            git config --local user.email "kentsw89@gmail.com"
             git config --local user.name "coolstx"
             
             # [skip ci]-ийг хасаж, энгийн хэлбэрээр commit хийх
