@@ -2,7 +2,6 @@ name: Advanced Contribution Bot
 
 on:
   schedule:
-    # Өдөрт хэд хэдэн удаа (04:30, 10:30, 16:30 UTC) ажиллаж, санамсаргүй байдлыг ихэсгэнэ
     - cron: '30 4 * * *'
     - cron: '30 10 * * *'
     - cron: '30 16 * * *'
@@ -11,29 +10,22 @@ on:
 jobs:
   contribute:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Smart Contribution Generator
         run: |
-          # Өнөөдөр ямар гараг байгааг шалгах (1=Даваа, 7=Ням)
           DAY_OF_WEEK=$(date +%u)
-          
-          # Хэрэв амралтын өдөр бол 70%-ийн магадлалтайгаар алгасах (Хүн шиг харагдуулах)
+
           if [ $DAY_OF_WEEK -ge 6 ] && [ $(( RANDOM % 10 )) -gt 2 ]; then
-            echo "Өнөөдөр амралтын өдөр. Commit хийхгүй алгаслаа."
+            echo "Weekend skip"
             exit 0
           fi
 
-          # 5-аас 15-ын хооронд санамсаргүй тоогоор commit хийнэ
-          NUM_COMMITS=$(( ( RANDOM % 11 )  + 5 ))
-          echo "Өнөөдөр $NUM_COMMITS удаа өөрчлөлт оруулна..."
+          NUM_COMMITS=$(( ( RANDOM % 11 ) + 5 ))
 
-          # Санамсаргүй commit мессежнүүдийн жагсаалт
           MESSAGES=(
             "fix: resolve UI alignment issue"
             "feat: add new utility functions"
@@ -44,20 +36,17 @@ jobs:
             "perf: improve memory management"
           )
 
-          # Таны профайлыг 100% ногоон болгох тохиргоо
           git config --local user.name "coolstx"
           git config --local user.email "coolstx@users.noreply.github.com"
 
           for i in $(seq 1 $NUM_COMMITS)
           do
-            # Санамсаргүй мессеж сонгох
             RANDOM_MSG=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
-            
-            echo "Log entry: $(date +'%Y-%m-%d %H:%M:%S') - Event $i" >> activity.log
+
+            echo "$(date)" >> activity.log
             git add activity.log
             git commit -m "$RANDOM_MSG [skip ci]"
-            
-            # Commit бүрийн хооронд бага зэрэг хугацаа авах (санамсаргүй секунд хүлээх)
+
             sleep $(( RANDOM % 3 + 1 ))
           done
 
