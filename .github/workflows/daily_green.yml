@@ -1,54 +1,47 @@
-name: Advanced Contribution Bot
+name: Repository Maintenance
 
 on:
-  schedule:
-    - cron: '30 4 * * *'
-    - cron: '30 10 * * *'
-    - cron: '30 16 * * *'
-  workflow_dispatch:
+schedule:
+- cron: '30 4 * * *'
+workflow_dispatch:
+
+permissions:
+contents: write
+
+concurrency:
+group: repository-maintenance
+cancel-in-progress: false
 
 jobs:
-  contribute:
-    runs-on: ubuntu-latest
+update:
+runs-on: ubuntu-latest
+timeout-minutes: 5
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v5
+    with:
+      ref: main
 
-      - name: Smart Contribution Generator
-        run: |
-          DAY_OF_WEEK=$(date +%u)
+  - name: Update activity log
+    run: |
+      mkdir -p logs
 
-          if [ $DAY_OF_WEEK -ge 6 ] && [ $(( RANDOM % 10 )) -gt 2 ]; then
-            echo "Weekend skip"
-            exit 0
-          fi
+      echo "Workflow executed at $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> logs/activity.log
 
-          NUM_COMMITS=$(( ( RANDOM % 11 ) + 5 ))
+  - name: Commit changes
+    run: |
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          MESSAGES=(
-            "fix: resolve UI alignment issue"
-            "feat: add new utility functions"
-            "docs: update installation guide"
-            "refactor: optimize core algorithm"
-            "chore: update dependencies"
-            "fix: patch security vulnerability"
-            "perf: improve memory management"
-          )
+      git add logs/activity.log
 
-          git config --local user.name "coolstx"
-          git config --local user.email "coolstx@users.noreply.github.com"
+      if git diff --cached --quiet; then
+        echo "No changes to commit."
+        exit 0
+      fi
 
-          for i in $(seq 1 $NUM_COMMITS)
-          do
-            RANDOM_MSG=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
+      git commit -m "chore: update activity log"
 
-            echo "$(date)" >> activity.log
-            git add activity.log
-            git commit -m "$RANDOM_MSG [skip ci]"
-
-            sleep $(( RANDOM % 3 + 1 ))
-          done
-
-      - name: Push changes
-        run: git push origin main
+  - name: Push changes
+    run: git push origin HEAD:main
