@@ -1,47 +1,44 @@
+
+name: Auto Contribution
+
 on:
   schedule:
     - cron: '30 4 * * *'
     - cron: '30 10 * * *'
     - cron: '30 16 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-contribution
+  cancel-in-progress: false
 
 jobs:
   contribute:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-      - name: Smart Contribution Generator
+      - name: Generate activity
+        shell: bash
         run: |
-          DAY_OF_WEEK=$(date +%u)
+          git config user.name "coolstx"
+          git config user.email "YOUR_GITHUB_NOREPLY_EMAIL"
 
-          if [ "$DAY_OF_WEEK" -ge 6 ] && [ $(( RANDOM % 10 )) -gt 2 ]; then
-            echo "Weekend skip"
-            exit 0
-          fi
+          NUM_COMMITS=$((RANDOM % 11 + 5))
 
-          NUM_COMMITS=$(( ( RANDOM % 11 ) + 5 ))
-
-          MESSAGES=(
-            "fix: resolve UI alignment issue"
-            "feat: add new utility functions"
-            "perf: improve memory management"
-          )
-
-          git config --local user.name "coolstx"
-          git config --local user.email "coolstx@users.noreply.github.com"
-
-          for i in $(seq 1 "$NUM_COMMITS")
+          for ((i=1; i<=NUM_COMMITS; i++))
           do
-            RANDOM_MSG=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
-
-            echo "Log entry: $(date +'%Y-%m-%d %H:%M:%S') - Event $i" >> activity.log
+            echo "$(date -u '+%Y-%m-%d %H:%M:%S UTC') | Activity $i" >> activity.log
 
             git add activity.log
-            git commit -m "$RANDOM_MSG [skip ci]"
-
-            sleep $(( RANDOM % 3 + 1 ))
+            git commit -m "chore: update activity log $i [skip ci]"
           done
+
+          git push origin HEAD:${{ github.event.repository.default_branch }}
